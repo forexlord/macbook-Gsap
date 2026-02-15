@@ -26,7 +26,7 @@ const moveGroup = (group, x) => {
   if (!group) return;
   gsap.to(group.position, { x, duration: ANIMATION_DURATION });
 };
-const modelswitcher = ({ scale, isMobile }) => {
+const ModelSwitcher = ({ scale, isMobile }) => {
   const SCALE_LARGE_DESKTOP = 0.08;
   const SCALE_LARGE_MOBILE = 0.05;
 
@@ -75,4 +75,4 @@ const modelswitcher = ({ scale, isMobile }) => {
   );
 };
 
-export default modelswitcher;
+export default ModelSwitcher;
