@@ -1,4 +1,4 @@
-const navLinks = [{ label: "Home" }];
+const navLinks = [{ label: "Home", href: "/" }];
 
 const noChangeParts = [
   "Object_84",
