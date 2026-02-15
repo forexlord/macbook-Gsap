@@ -1,11 +1,4 @@
-const navLinks = [
-  { label: "Store" },
-  { label: "Mac" },
-  { label: "iPhone" },
-  { label: "Watch" },
-  { label: "Vision" },
-  { label: "AirPods" },
-];
+const navLinks = [{ label: "Home" }];
 
 const noChangeParts = [
   "Object_84",
@@ -121,11 +114,13 @@ const featureSequence = [
 ];
 
 const footerLinks = [
-  { label: "Privacy Policy", link: "#" },
-  { label: "Terms of Use", link: "#" },
-  { label: "Sales Policy", link: "#" },
-  { label: "Legal", link: "#" },
-  { label: "Site Map", link: "#" },
+  { label: "GitHub", link: "https://github.com/forexlord" },
+  { label: "Email", link: "mailto:eyorecovery95@gmail.com" },
+  {
+    label: "LinkedIn",
+    link: "https://www.linkedin.com/in/recovery-eyo-2183032ba?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+  },
+  { label: "X", link: "https://x.com/recoveryeyo?s=21" },
 ];
 
 export {
