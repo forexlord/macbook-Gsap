@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { Canvas } from "@react-three/fiber";
 import { Box, OrbitControls } from "@react-three/drei";
 import MacbookModel14 from "./models/Macbook-14";
-import ModelSwitcher from "./three/Modelswitcher";
+import ModelSwitcher from "./three/ModelSwitcher";
 import StudioLight from "./three/StudioLight";
 import { useMediaQuery } from "react-responsive";
 
