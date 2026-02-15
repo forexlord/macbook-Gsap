@@ -23,7 +23,7 @@ const ModelScroll = () => {
         playsInline: true,
         preload: "auto",
         loop: true,
-        crossorigin: "anonymous",
+        crossOrigin: "anonymous",
       });
 
       v.load();

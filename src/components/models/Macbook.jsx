@@ -21,15 +21,17 @@ export default function MacbookModel(props) {
 
   const screenTexture = useVideoTexture(texture);
 
+  const noChangePartsSet = React.useMemo(() => new Set(noChangeParts), []);
+
   useEffect(() => {
     scene.traverse((child) => {
       if (child.isMesh) {
-        if (!noChangeParts[child.name]) {
+        if (!noChangePartsSet.has(child.name)) {
           child.material.color.set(color);
         }
       }
     });
-  }, [color, scene]);
+  }, [color, scene, noChangePartsSet]);
 
   return (
     <group {...props} dispose={null}>
