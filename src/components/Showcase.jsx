@@ -1,7 +1,7 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -9,6 +9,25 @@ gsap.registerPlugin(ScrollTrigger);
 const Showcase = () => {
   const isTablet = useMediaQuery({ query: "(max-width: 1024px)" });
   const videoRef = useRef(null);
+  const userAllowedSoundRef = useRef(false);
+  const soundEnabledAtRef = useRef(0);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+
+  const enableSound = () => {
+    const video = videoRef.current;
+    if (video) {
+      userAllowedSoundRef.current = true;
+      soundEnabledAtRef.current = Date.now();
+      setSoundEnabled(true);
+      // Order matters: unmute and set volume in same user gesture, then play
+      video.muted = false;
+      video.volume = 1;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
+    }
+  };
 
   useGSAP(() => {
     if (!isTablet) {
@@ -32,7 +51,7 @@ const Showcase = () => {
           ease: "power1.in",
         });
 
-      // Scroll-driven volume: fade in as user scrolls to video, fade out as they scroll past
+      // Scroll-driven volume: only unmute if user has clicked "Enable sound" (browser requires user gesture)
       const video = videoRef.current;
       if (video) {
         ScrollTrigger.create({
@@ -46,8 +65,19 @@ const Showcase = () => {
             if (p <= 0.15) vol = p / 0.15;
             else if (p <= 0.75) vol = 1;
             else vol = (1 - p) / 0.25;
-            video.volume = vol;
-            video.muted = vol === 0;
+
+            const allowUnmute = userAllowedSoundRef.current;
+            // Don't override unmute for 400ms after user clicks so they actually hear sound (scroll handler can fire immediately and re-mute)
+            const justEnabled = allowUnmute && Date.now() - soundEnabledAtRef.current < 400;
+            if (!justEnabled) {
+              video.volume = vol;
+              video.muted = vol === 0 || !allowUnmute;
+            }
+
+            // If video was paused (e.g. by browser after failed unmute), resume when back in view
+            if (vol > 0 && video.paused) {
+              video.play().catch(() => {});
+            }
           },
         });
       }
@@ -56,7 +86,7 @@ const Showcase = () => {
 
   return (
     <section id="showcase">
-      <div className="media">
+      <div className="media relative">
         <video
           ref={videoRef}
           src="https://res.cloudinary.com/dbs0p6jc9/video/upload/v1770848243/new_rvu9yr.mp4"
@@ -67,6 +97,20 @@ const Showcase = () => {
           muted
           playsInline
         />
+        {!soundEnabled && (
+          <button
+            type="button"
+            onClick={enableSound}
+            className="absolute top-4 right-4 z-10 flex items-center gap-2 rounded-full bg-black/60 px-4 py-2 text-sm text-white backdrop-blur-sm hover:bg-black/80"
+            aria-label="Enable sound"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+              <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM18.584 5.106a.75.75 0 0 1 1.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 0 1-1.06-1.06 8.25 8.25 0 0 0 0-11.668.75.75 0 0 1 0-1.06Z" />
+              <path d="M15.932 7.757a.75.75 0 0 1 1.061 0 6 6 0 0 1 0 8.486.75.75 0 0 1-1.06-1.061 4.5 4.5 0 0 0 0-6.364.75.75 0 0 1 0-1.06Z" />
+            </svg>
+            Enable sound
+          </button>
+        )}
         <div className="mask">
           <img src="/mask-logo.svg" alt="m4-chip" />
         </div>
